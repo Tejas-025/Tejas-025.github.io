@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarvesh Deshpande - Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Removed React, ReactDOM, and Lucide-React scripts as they are not used and caused errors -->
+    
+    <script>
+        // Custom Tailwind configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Swapped to a Cyan/Teal accent for a more 'electric' tech feel
+                        'primary': {
+                            '50': '#ecfeff',
+                            '100': '#cffafe',
+                            '200': '#a5f3fc',
+                            '300': '#67e8f9',
+                            '400': '#22d3ee',
+                            '500': '#06b6d4',
+                            '600': '#0891b2',
+                            '700': '#0e7490',
+                            '800': '#155e75',
+                            '900': '#164e63',
+                        },
+                        // Using Slate for the dark theme - it has cooler, bluer undertones than Gray
+                        'dark': {
+                            '50': '#f8fafc',
+                            '100': '#f1f5f9',
+                            '200': '#e2e8f0',
+                            '300': '#cbd5e1',
+                            '400': '#94a3b8',
+                            '500': '#64748b',
+                            '600': '#475569',
+                            '700': '#334155',
+                            '800': '#1e293b',
+                            '900': '#0f172a',
+                        },
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            'from': { opacity: '0', transform: 'translateY(30px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' },
+                        },
+                        slideInLeft: {
+                            'from': { opacity: '0', transform: 'translateX(-30px)' },
+                            'to': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        slideInRight: {
+                            'from': { opacity: '0', transform: 'translateX(30px)' },
+                            'to': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        bounceSlow: {
+                            '0%, 100%': { transform: 'translateY(-25%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+                            '50%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
+                        }
+                    },
+                    animation: {
+                        'fadeInUp': 'fadeInUp 0.8s ease forwards',
+                        'fadeIn': 'fadeIn 0.8s ease forwards',
+                        'slideInLeft': 'slideInLeft 0.8s ease forwards',
+                        'slideInRight': 'slideInRight 0.8s ease forwards',
+                        'bounce-slow': 'bounceSlow 1.5s infinite',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Base font */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Hero Gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* Fade-in animation setup */
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Active nav link style */
+        .nav-link-active {
+            color: #06b6d4; /* primary-500 */
+            font-weight: 600;
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        /* Timeline vertical line */
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 1.25rem;
+            bottom: 0;
+            width: 2px;
+            background-color: #334155; /* dark-700 */
+        }
+        
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+        
+        /* Light mode timeline */
+        .timeline-light .timeline-line {
+             background-color: #e2e8f0; /* dark-200 */
+        }
+        .timeline-light .timeline-dot {
+             border-color: #f8fafc; /* dark-50 */
+        }
+
+        /* Timeline dot */
+        .timeline-dot {
+            position: absolute;
+            left: 12px;
+            top: 1.25rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid #0f172a; /* dark-900 */
+            background-color: #06b6d4; /* primary-500 */
+            z-index: 10;
+        }
+        .timeline-dot-secondary {
+            background-color: #67e8f9; /* primary-300 */
+        }
+
+        /* Custom shape divider */
+        .shape-divider {
+            position: absolute;
+            bottom: -1px; /* Fix for 1px gap */
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .shape-divider svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 80px; /* Adjust height of the wave */
+        }
+
+        .shape-divider .shape-fill {
+            fill: #ffffff; /* White fill to transition to light section */
+        }
+
+    </style>
+</head>
+<body class="bg-dark-900 text-dark-300">
+
+    <!-- ========== HEADER ========== -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-dark-900/80 backdrop-blur-md shadow-md shadow-black/10">
+        <nav class="container mx-auto max-w-6xl px-4 md:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#home" class="text-2xl font-bold text-primary-400">Sarvesh Deshpande</a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="menu-toggle" class="md:hidden text-dark-300 hover:text-primary-400" aria-label="Toggle menu">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <ul class="hidden md:flex space-x-8">
+                    <li><a href="#home" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">Home</a></li>
+                    <li><a href="#about" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">About</a></li>
+                    <li><a href="#education" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">Education</a></li>
+                    <li><a href="#certificates" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">Certificates</a></li>
+                    <li><a href="#experience" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">Experience</a></li>
+                    <li><a href="#projects" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">Projects</a></li>
+                    <li><a href="#contact" class="nav-links text-dark-300 hover:text-primary-400 transition duration-300">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="md:hidden absolute top-full left-0 right-0 bg-dark-800 shadow-lg py-4 opacity-0 transform -translate-y-4 pointer-events-none">
+            <ul class="flex flex-col items-center space-y-4">
+                <li><a href="#home" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">Home</a></li>
+                <li><a href="#about" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">About</a></li>
+                <li><a href="#education" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">Education</a></li>
+                <li><a href="#certificates" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">Certificates</a></li>
+                <li><a href="#experience" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">Experience</a></li>
+                <li><a href="#projects" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">Projects</a></li>
+                <li><a href="#contact" class="nav-links-mobile text-lg text-dark-200 hover:text-primary-400">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- ========== HERO SECTION ========== -->
+        <section id="home" class="hero-gradient min-h-screen flex items-center pt-20 pb-10 relative">
+            <div class="container mx-auto max-w-6xl px-4 md:px-6 text-center text-white z-10">
+                <div class="hero-content">
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-4 opacity-0 animate-fadeInUp text-dark-100" style="animation-delay: 0.1s;">Sarvesh Deshpande</h1>
+                    <p class="text-xl md:text-2xl mb-8 opacity-0 animate-fadeInUp text-primary-300" style="animation-delay: 0.3s;">Mechanical & Electronic Systems Engineering Student | R&D Enthusiast</p>
+                    <a href="#about" class="inline-block bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105 opacity-0 animate-fadeInUp" style="animation-delay: 0.5s;">
+                        Learn More About Me
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scroll Down Arrow -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
+                <a href="#about" aria-label="Scroll down">
+                    <svg class="w-8 h-8 text-white animate-bounce-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </a>
+            </div>
+
+            <!-- Shape Divider -->
+            <div class="shape-divider">
+                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+                </svg>
+            </div>
+        </section>
+
+        <!-- ========== ABOUT ME SECTION (LIGHT) ========== -->
+        <section id="about" class="py-20 md:py-28 bg-white text-dark-700">
+            <div class="container mx-auto max-w-6xl px-4 md:px-6">
+                <h2 class="section-title text-4xl font-bold text-center mb-4 text-dark-900 fade-in">About Me</h2>
+                <div class="w-24 h-1 bg-primary-500 mx-auto mb-16 fade-in"></div>
+
+                <div class="grid md:grid-cols-5 gap-12 items-start">
+                    <!-- FIX: Removed inline style, added data-animation attribute -->
+                    <div class="md:col-span-3 space-y-4 text-dark-600 text-lg fade-in" data-animation="animate-slideInLeft">
+                        <p>I'm a dual-degree student in Mechanical Engineering and Electronic Systems with a strong academic record and hands-on experience in research and development. My expertise spans CAD design, additive manufacturing, and simulation technologies.</p>
+                        <p>I've worked on diverse projects ranging from designing aerodynamic F1 car components to developing advanced 3D printing systems. I'm passionate about solving complex engineering problems, bringing innovative ideas to life, and exploring the world of high-performance engineering—especially in motorsport.</p>
+                        <!-- CV Download Button Added Here -->
+                        <a href="https://drive.google.com/file/d/1s4YAhS639f5Fb54bppF70pMZ3en7APsV/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg text-base transition duration-300 transform hover:scale-105 mt-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            View My CV
+                        </a>
+                    </div>
+                    <!-- FIX: Removed inline style, added data-animation attribute -->
+                    <div class="md:col-span-2 space-y-6 fade-in" data-animation="animate-slideInRight">
+                        <!-- Skill Card 1 -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-t-4 border-primary-400">
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="flex-shrink-0 bg-primary-100 text-primary-600 p-2 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15Lc-3 0-6 3-6 6v3h12v-3c0-3-3-6-6-6z"></path><path d="M15 12a3 3 0 10-6 0 3 3 0 006 0z"></path><path d="M18.8 8.5c-1.3-2.3-3.8-3.5-6.8-3.5s-5.5 1.2-6.8 3.5L3 10.2V13h18v-2.8l-2.2-1.7z"></path></svg>
+                                </span>
+                                <h3 class="text-xl font-semibold text-dark-800">CAD & Design</h3>
+                            </div>
+                            <p class="text-dark-600">CATIA, SolidWorks, AutoCAD, Fusion 360, 3DEXPERIENCE, Geomagic Design X</p>
+                        </div>
+                        <!-- Skill Card 2 -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-t-4 border-primary-400">
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="flex-shrink-0 bg-primary-100 text-primary-600 p-2 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+                                </span>
+                                <h3 class="text-xl font-semibold text-dark-800">Simulation & Analysis</h3>
+                            </div>
+                            <p class="text-dark-600">MATLAB/Simulink, Simscape, Simscale, Control Systems, FEA, GD&T</p>
+                        </div>
+                        <!-- Skill Card 3 -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-t-4 border-primary-400">
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="flex-shrink-0 bg-primary-100 text-primary-600 p-2 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.13 13.6a8.2 8.2 0 0 1-3.32 6.59 8.17 8.17 0 0 1-6.6 2.31 8.17 8.17 0 0 1-6.6-2.31 8.2 8.2 0 0 1-3.32-6.59c-.17-1.12-.12-2.22.13-3.29a8.1 8.1 0 0 1 1.6-3.21 8.1 8.1 0 0 1 3.21-1.6c1.07-.25 2.17-.3 3.29-.13a8.2 8.2 0 0 1 6.59 3.32 8.17 8.17 0 0 1 2.31 6.6Z"></path><path d="m13.5 10.5-3 3"></path><path d="m10.5 10.5 3 3"></path><path d="m9 16.5 6-6"></path></svg>
+                                </span>
+                                <h3 class="text-xl font-semibold text-dark-800">Manufacturing & Hardware</h3>
+                            </div>
+                            <p class="text-dark-600">3D Printing, DfAM, Hardware Integration, Motion Control</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== EDUCATION SECTION (DARK) ========== -->
+        <section id="education" class="py-20 md:py-28 bg-dark-900 text-dark-300">
+            <div class="container mx-auto max-w-4xl px-4 md:px-6">
+                <h2 class="section-title text-4xl font-bold text-center mb-4 text-white fade-in">Education</h2>
+                <div class="w-24 h-1 bg-primary-500 mx-auto mb-20 fade-in"></div>
+
+                <div class="relative">
+                    
+                    <!-- Timeline Item 1 -->
+                    <div class="relative pl-12 pb-12 timeline-item fade-in">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-dot"></div>
+                        <div class="transition-all duration-300 hover:bg-dark-800 p-4 rounded-lg">
+                            <span class="text-sm font-medium text-dark-400">Aug 2023 – Present</span>
+                            <h3 class="text-2xl font-semibold text-primary-400 mt-1 mb-1">BS Electronic Systems</h3>
+                            <p class="text-dark-400 font-medium mb-3">Indian Institute of Technology, Madras</p>
+                            <p class="text-dark-300 mb-3">Currently pursuing Bachelor of Science in Electronic Systems with focus on advanced engineering applications.</p>
+                            <span class="inline-block bg-primary-500/10 text-primary-300 font-semibold px-4 py-1 rounded-full text-sm">GPA: 6.8/10</span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 2 -->
+                    <div class="relative pl-12 pb-12 timeline-item fade-in">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-dot"></div>
+                        <div class="transition-all duration-300 hover:bg-dark-800 p-4 rounded-lg">
+                            <span class="text-sm font-medium text-dark-400">Aug 2023 – Present</span>
+                            <h3 class="text-2xl font-semibold text-primary-400 mt-1 mb-1">BE Mechanical Engineering</h3>
+                            <p class="text-dark-400 font-medium mb-3">Gogte Institute of Technology, Belgaum</p>
+                            <p class="text-dark-300 mb-3">Dual degree program combining mechanical engineering fundamentals with practical applications in design and manufacturing.</p>
+                            <span class="inline-block bg-primary-500/10 text-primary-300 font-semibold px-4 py-1 rounded-full text-sm">GPA: 7.5/10</span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3 -->
+                    <div class="relative pl-12 pb-12 timeline-item fade-in">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-dot timeline-dot-secondary"></div>
+                        <div class="transition-all duration-300 hover:bg-dark-800 p-4 rounded-lg">
+                            <span class="text-sm font-medium text-dark-400">July 2021 – June 2023</span>
+                            <h3 class="text-2xl font-semibold text-white mt-1 mb-1">Pre-University Course (PUC)</h3>
+                            <p class="text-dark-400 font-medium mb-3">Govindram Seksaria Science College, Belgaum</p>
+                            <p class="text-dark-300 mb-3">Science stream with focus on Physics, Chemistry, and Mathematics.</p>
+                            <span class="inline-block bg-dark-700 text-dark-300 font-semibold px-4 py-1 rounded-full text-sm">GPA: 8.3/10</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CERTIFICATES & LICENSES SECTION (LIGHT) ========== -->
+        <section id="certificates" class="py-20 md:py-28 bg-white text-dark-700">
+            <div class="container mx-auto max-w-6xl px-4 md:px-6">
+                <h2 class="section-title text-4xl font-bold text-center mb-4 text-dark-900 fade-in">Certificates & Licenses</h2>
+                <div class="w-24 h-1 bg-primary-500 mx-auto mb-16 fade-in"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <!-- Certificate 1: Ford Advanced -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">EV Engineering Advanced Job Simulation</h3>
+                            <p class="text-dark-500 font-medium mb-1">Ford (via Forage) | Issued: May 2024</p>
+                            <p class="text-sm text-dark-600 mb-2">Completed practical tasks in reviewing battery testing protocols, comparing performance, and integrating ROS components.</p>
+                            <a href="https://drive.google.com/file/d/1qr7n0bZlwDN5vGAxolQfYLTorWSXcscP/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate 2: Ford Intermediate -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">EV Engineering Intermediate Job Simulation</h3>
+                            <p class="text-dark-500 font-medium mb-1">Ford (via Forage) | Issued: May 2024</p>
+                            <p class="text-sm text-dark-600 mb-2">Completed practical tasks in assessing design tradeoffs and understanding career paths in EV engineering.</p>
+                            <a href="https://drive.google.com/file/d/15_tIniG1B31blFJmFGc9NBuevuGBO8Iy/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+
+                    <!-- Certificate 3: GD&T -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">Mastering 3D Geometric Dimensioning and Tolerancing (GD&T)</h3>
+                            <p class="text-dark-500 font-medium mb-1">Geomiq Academy | Issued: Oct 2025</p>
+                            <p class="text-sm text-dark-600 mb-2">Certified in 3D GD&T principles, symbols, and applications for manufacturing, inspection, and quality control.</p>
+                            <a href="https://drive.google.com/file/d/1QWfaP19kCOaHj2QqzvPsvMuLtmOPfaGN/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate 4: BS8888 -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">Engineering Drawing Standards: BS8888 Essentials</h3>
+                            <p class="text-dark-500 font-medium mb-1">Geomiq Academy | Issued: Oct 2025</p>
+                            <p class="text-sm text-dark-600 mb-2">Tested and certified in BS8888 standards for engineering drawing layouts, conventions, dimensioning, and tolerancing.</p>
+                            <a href="https://drive.google.com/file/d/1nlBACEzE5P8vS44-8ypYJ7zs9ipFYGAs/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate 5: CFD -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">Workshop on Fundamentals of CFD</h3>
+                            <p class="text-dark-500 font-medium mb-1">SKILL LYNCE | Issued: Oct 2025</p>
+                            <p class="text-sm text-dark-600 mb-2">Certificate of participation for attending the workshop on Computational Fluid Dynamics fundamentals.</p>
+                            <a href="https://drive.google.com/file/d/1B-PGMc_Yt2VPNBlmeYOmLBFBQn9CAnfd/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate 6: CAD & 3D Printing -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">Certificate of Excellence: CAD and 3D Printing</h3>
+                            <p class="text-dark-500 font-medium mb-1">thingQbator (nasscom foundation) | Issued: 2024</p>
+                            <p class="text-sm text-dark-600 mb-2">Successfully completed the course on CAD and 3D Printing as part of the thingQbator program.</p>
+                            <a href="https://drive.google.com/file/d/1cl_xr9uh9QjUiW1A87yAtbHNPDp4yGwZ/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+
+                    <!-- Certificate 7: MATLAB -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">MATLAB Fundamentals</h3>
+                            <p class="text-dark-500 font-medium mb-1">MathWorks Training Services | Issued: May 2024</p>
+                            <p class="text-sm text-dark-600 mb-2">Successfully completed the self-paced training course on MATLAB Fundamentals.</p>
+                            <a href="https://drive.google.com/file/d/1JKdssxyGYMU6t0IGD9MEqoGhybpeMyTz/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate 8: Simulink -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">Simulink Fundamentals</h3>
+                            <p class="text-dark-500 font-medium mb-1">MathWorks Training Services | Issued: May 2024</p>
+                            <p class="text-sm text-dark-600 mb-2">Successfully completed 100% of the self-paced training course on Simulink Fundamentals.</p>
+                            <a href="https://drive.google.com/file/d/1nm32SOSUb0VCE3bAnHZXF6_PWW3ezC2c/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Certificate 9: Simscape Battery -->
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-lg fade-in gap-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1">
+                        <div class="flex-shrink-0">
+                            <svg class="w-12 h-12 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9A2.25 2.25 0 0019.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12h-3m3 3h-3m3 3h-3m-3.75 0h.008v.008h-.008v-.008z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-dark-800">Simscape Battery Onramp</h3>
+                            <p class="text-dark-500 font-medium mb-1">MathWorks Training Services | Issued: May 2024</p>
+                            <p class="text-sm text-dark-600 mb-2">Successfully completed 100% of the self-paced training course on Simscape Battery.</p>
+                            <a href="https://drive.google.com/file/d/1EnyUjZd07FU5BsGz_2lBdcM1gxDtIfFe/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline font-medium text-sm">Show credential</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== EXPERIENCE SECTION (DARK) ========== -->
+        <section id="experience" class="py-20 md:py-28 bg-dark-900 text-dark-300">
+            <div class="container mx-auto max-w-4xl px-4 md:px-6">
+                <h2 class="section-title text-4xl font-bold text-center mb-4 text-white fade-in">Experience</h2>
+                <div class="w-24 h-1 bg-primary-500 mx-auto mb-20 fade-in"></div>
+
+                <div class="relative">
+                    
+                    <!-- Timeline Item 1 -->
+                    <div class="relative pl-12 pb-12 timeline-item fade-in">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-dot"></div>
+                        <div class="transition-all duration-300 hover:bg-dark-800 p-4 rounded-lg">
+                            <span class="text-sm font-medium text-dark-400">Jan 2025 – May 2025</span>
+                            <h3 class="text-2xl font-semibold text-primary-400 mt-1 mb-1">Research and Development Intern</h3>
+                            <p class="text-dark-400 font-medium mb-4">Carbine Systems, Karnataka, India</p>
+                            <!-- Updated Experience List -->
+                            <ul class="space-y-3 list-disc list-outside pl-5 text-dark-300">
+                                <li>Designed and programmed intelligent Daytime Running Light (DRL) LED systems featuring customizable patterns, adaptive brightness, and microcontroller logic to enhance vehicle safety and aesthetics.</li>
+                                <li>Contributed to the development of a Metal 3D printer, focusing on calibrating motion control and laser systems for precise metal deposition.</li>
+                                <li>Utilized CAD tools (SolidWorks, Fusion 360) to design component housings, electronic interfaces, and mechanical mounts for integrated system assemblies.</li>
+                                <li>Acquired comprehensive expertise in additive manufacturing workflows, including 3D printer design, hardware integration, motion control, materials processing, and the development of multi-material systems.</li>
+                                <li>Collaborated with engineering teams to identify design inefficiencies, implement iterative improvements, and enhance overall system robustness.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Add more experience items here -->
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PROJECTS SECTION (LIGHT) ========== -->
+        <section id="projects" class="py-20 md:py-28 bg-white text-dark-700">
+            <div class="container mx-auto max-w-6xl px-4 md:px-6">
+                <h2 class="section-title text-4xl font-bold text-center mb-4 text-dark-900 fade-in">Featured Projects</h2>
+                <div class="w-24 h-1 bg-primary-500 mx-auto mb-16 fade-in"></div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Project (NEW): AI Voice 3D Printing -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl fade-in border border-dark-100">
+                        <img src="https://placehold.co/600x400/0e7490/ffffff?text=AI+3D+Printing" alt="AI Voice 3D Printing Project" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <span class="inline-block bg-yellow-100 text-yellow-800 font-semibold px-3 py-1 rounded-full text-xs mb-3 self-start">Ongoing</span>
+                            <h3 class="text-xl font-semibold text-dark-800 mb-2">Voice-enabled AI based 3D printing</h3>
+                            <p class="text-dark-600 mb-4 flex-grow">Developing an AI based solution for 3D printing over voice with IoT integration. Reduced print setup time by 30% by finding models, slicing and printing all over the air.</p>
+                            
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">AI</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">IoT</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">3D Printing</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Voice Control</span>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <a href="https://github.com/Tejas-025/AI_3D-printing" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                    View Documentation
+                                </a>
+                                <a href="https://github.com/Tejas-025/AI_3D-printing" class="inline-flex items-center gap-2 text-sm font-medium text-dark-500 hover:text-dark-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 1 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl fade-in border border-dark-100">
+                        <img src="https://placehold.co/600x400/0891b2/ffffff?text=F1+Rear+Wing" alt="F1 Rear Wing Project" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <span class="inline-block bg-green-100 text-green-800 font-semibold px-3 py-1 rounded-full text-xs mb-3 self-start">Completed</span>
+                            <h3 class="text-xl font-semibold text-dark-800 mb-2">Sectioned F1 Rear Wing Development</h3>
+                            <p class="text-dark-600 mb-4 flex-grow">Designing and modeling a rear wing with multiple aerodynamic sections to analyze downforce characteristics under cornering conditions. Utilizing CAD and simulation tools.</p>
+                            
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">CAD Design</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Aerodynamics</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Simulation</span>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <a href="https://github.com/Tejas-025/Sectional_Rear_wing" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                    View Documentation
+                                </a>
+                                <a href="https://github.com/Tejas-025/Sectional_Rear_wing" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                                <a href="" class="inline-flex items-center gap-2 text-sm font-medium text-dark-500 hover:text-dark-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl fade-in border border-dark-100">
+                        <img src="https://placehold.co/600x400/0e7490/ffffff?text=3D+Printer" alt="3D Printer Project" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <span class="inline-block bg-green-100 text-green-800 font-semibold px-3 py-1 rounded-full text-xs mb-3 self-start">Completed</span>
+                            <h3 class="text-xl font-semibold text-dark-800 mb-2">3D Printer Restoration & IoT Integration</h3>
+                            <p class="text-dark-600 mb-4 flex-grow">Restored and upgraded a legacy 3D printer by modifying firmware, recalibrating print parameters, and integrating IoT connectivity for remote monitoring.</p>
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">IoT</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">3D Printing</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Firmware</span>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <a href="https://github.com/Tejas-025/3D-Printer-Restoration" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                    View Documentation
+                                </a>
+                                <a href="https://github.com/Tejas-025/3D-Printer-Restoration" class="inline-flex items-center gap-2 text-sm font-medium text-dark-500 hover:text-dark-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl fade-in border border-dark-100">
+                        <img src="https://placehold.co/600x400/0891b2/ffffff?text=Simulation" alt="3D Printer Simulation Project" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <span class="inline-block bg-green-100 text-green-800 font-semibold px-3 py-1 rounded-full text-xs mb-3 self-start">Completed</span>
+                            <h3 class="text-xl font-semibold text-dark-800 mb-2">Full-Scale 3D Printer Simulation</h3>
+                            <p class="text-dark-600 mb-4 flex-grow">Developed and validated a comprehensive MATLAB/Simulink model for both Cartesian and CoreXY mechanisms, including thermal management and PID control systems.</p>
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">MATLAB</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Simulink</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Control Systems</span>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <a href="https://github.com/Tejas-025/3D_printing_simulation" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                    View Documentation
+                                </a>
+                                <a href="https://github.com/Tejas-025/3D_printing_simulation" class="inline-flex items-center gap-2 text-sm font-medium text-dark-500 hover:text-dark-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl fade-in border border-dark-100">
+                        <img src="https://placehold.co/600x400/0e7490/ffffff?text=HEV+Powertrain" alt="Hybrid EV Powertrain Project" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <span class="inline-block bg-green-100 text-green-800 font-semibold px-3 py-1 rounded-full text-xs mb-3 self-start">Completed</span>
+                            <h3 class="text-xl font-semibold text-dark-800 mb-2">Hybrid EV Powertrain Simulation</h3>
+                            <p class="text-dark-600 mb-4 flex-grow">Simulated HEV systems to assess powertrain efficiency, battery performance, and energy management. Applied Simscape for cell and pack-level behavior analysis.</p>
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Simscape</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Vehicle Dynamics</span>
+                                <span class="tech-tag bg-dark-100 text-dark-700 px-3 py-1 rounded-full text-xs font-medium">Battery Systems</span>
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <a href="https://github.com/Tejas-025/HEV_Simulation" class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                    View Documentation
+                                </a>
+                                <a href="https://github.com/Tejas-025/HEV_Simulation" class="inline-flex items-center gap-2 text-sm font-medium text-dark-500 hover:text-dark-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CONTACT SECTION (DARK) ========== -->
+        <section id="contact" class="py-20 md:py-28 bg-dark-900 text-white relative overflow-hidden">
+            <!-- Background glow effect -->
+            <div class="absolute -top-1/2 left-1/2 -translate-x-1/2 w-1/2 h-[500px] bg-gradient-to-br from-primary-700/20 to-transparent blur-[120px] rounded-full z-0"></div>
+            
+            <div class="container mx-auto max-w-4xl px-4 md:px-6 text-center z-10 relative">
+                <h2 class="section-title text-4xl font-bold text-center mb-6 fade-in">Get In Touch</h2>
+                <p class="text-lg text-dark-300 mb-12 fade-in">Let's collaborate on innovative engineering solutions!</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Email -->
+                    <div class="bg-dark-800/60 backdrop-blur-sm p-6 rounded-xl flex flex-col items-center fade-in transition-all duration-300 hover:bg-dark-700/80 hover:-translate-y-1">
+                        <svg class="w-10 h-10 text-primary-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                        <h3 class="text-xl font-semibold mb-2">Email</h3>
+                        <a href="mailto:deshpandesarvesh26@gmail.com" class="text-primary-300 hover:text-primary-100 hover:underline transition duration-300 break-all text-sm">deshpandesarvesh26@gmail.com</a>
+                    </div>
+                    <!-- Phone -->
+                    <!-- FIX: Removed inline style, added data-animation-delay -->
+                    <div class="bg-dark-800/60 backdrop-blur-sm p-6 rounded-xl flex flex-col items-center fade-in transition-all duration-300 hover:bg-dark-700/80 hover:-translate-y-1" data-animation-delay="100">
+                        <svg class="w-10 h-10 text-primary-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.211-.998-.552-1.348l-2.46-2.46a2.25 2.25 0 00-3.182 0l-1.928 1.928c-.861-.26-1.663-.6-2.4-1.004l-1.004-2.4c-.403-.738-.74-1.54-1.004-2.4l1.928-1.928a2.25 2.25 0 000-3.182l-2.46-2.46A2.25 2.25 0 006.128 2.25H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                        <h3 class="text-xl font-semibold mb-2">Phone</h3>
+                        <a href="tel:+917483400323" class="text-primary-300 hover:text-primary-100 hover:underline transition duration-300">+91 7483400323</a>
+                    </div>
+                    <!-- LinkedIn -->
+                    <!-- FIX: Removed inline style, added data-animation-delay -->
+                    <div class="bg-dark-800/60 backdrop-blur-sm p-6 rounded-xl flex flex-col items-center fade-in transition-all duration-300 hover:bg-dark-700/80 hover:-translate-y-1" data-animation-delay="200">
+                        <svg class="w-10 h-10 text-primary-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                        <h3 class="text-xl font-semibold mb-2">LinkedIn</h3>
+                        <a href="https://linkedin.com/in/sarvesh-deshpandesd" target="_blank" rel="noopener noreferrer" class="text-primary-300 hover:text-primary-100 hover:underline transition duration-300">Sarvesh Deshpande</a>
+                    </div>
+                    <!-- GitHub -->
+                    <!-- FIX: Removed inline style, added data-animation-delay -->
+                    <div class="bg-dark-800/60 backdrop-blur-sm p-6 rounded-xl flex flex-col items-center fade-in transition-all duration-300 hover:bg-dark-700/80 hover:-translate-y-1" data-animation-delay="300">
+                         <svg class="w-10 h-10 text-primary-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        <h3 class="text-xl font-semibold mb-2">GitHub</h3>
+                        <a href="https://github.com/TeJas-025" target="_blank" rel="noopener noreferrer" class="text-primary-300 hover:text-primary-100 hover:underline transition duration-300">Sarvesh Deshpande</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-dark-900 border-t border-dark-700 py-6">
+        <div class="container mx-auto max-w-6xl px-4 md:px-6 text-center text-dark-500">
+            <p>&copy; <span id="current-year"></span> Sarvesh Deshpande. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ========== SCROLL TO TOP BUTTON ========== -->
+    <button id="scroll-to-top" class="fixed bottom-6 right-6 bg-primary-500 hover:bg-primary-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 transform translate-y-4" aria-label="Scroll to top">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+
+    <script>
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // --- Mobile Menu Toggle ---
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileNavLinks = document.querySelectorAll('.nav-links-mobile');
+
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = mobileMenu.classList.toggle('opacity-100');
+            mobileMenu.classList.toggle('pointer-events-auto');
+            mobileMenu.classList.toggle('transform-translate-y-0');
+            mobileMenu.classList.toggle('-translate-y-4');
+            menuToggle.setAttribute('aria-expanded', isExpanded);
+        });
+        
+        // Close mobile menu when a link is clicked
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('opacity-100', 'pointer-events-auto', 'transform-translate-y-0');
+                mobileMenu.classList.add('-translate-y-4');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+
+        // --- Smooth Scrolling for All Nav Links ---
+        const headerOffset = document.querySelector('header').offsetHeight;
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // --- Intersection Observer for fade-in animations ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // FIX: Read data attributes for animation class and delay
+                    const animationClass = entry.target.dataset.animation || 'animate-fadeInUp';
+                    const animationDelay = entry.target.dataset.animationDelay;
+
+                    if (animationDelay) {
+                        entry.target.style.animationDelay = `${animationDelay}ms`;
+                    }
+                    
+                    // FIX: Add the animation class (e.g., 'animate-slideInLeft')
+                    entry.target.classList.add(animationClass);
+                    
+                    obs.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // --- Active navigation highlighting on scroll ---
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links');
+        const mobileLinks = document.querySelectorAll('.nav-links-mobile');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const scrollBuffer = headerOffset + 50; // Add 50px buffer
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= (sectionTop - scrollBuffer)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            const allLinks = [...navLinks, ...mobileLinks];
+
+            allLinks.forEach(link => {
+                link.classList.remove('nav-link-active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+
+            // Special case for home
+            if (current === 'home' || current === '') {
+                 const homeLink = document.querySelector('.nav-links[href="#home"]');
+                 const mobileHomeLink = document.querySelector('.nav-links-mobile[href="#home"]');
+                 if(homeLink) homeLink.classList.add('nav-link-active');
+                 if(mobileHomeLink) mobileHomeLink.classList.add('nav-link-active');
+            }
+        });
+
+        // --- Scroll to Top Button ---
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                scrollToTopBtn.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+        
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>
+
+
+
+
+
